@@ -1,92 +1,147 @@
-/* Estilos gerais */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-}
-
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-h1 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 30px;
-}
-
-/* Estilos dos cartões */
-.card {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-}
-
-.question {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-}
-
-.question h3 {
-    margin-top: 0;
-    color: #2c3e50;
-}
-
-.answer {
-    padding: 0 20px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
-    background-color: #f9f9f9;
-}
-
-.answer p {
-    margin: 0;
-    padding: 15px 0;
-    color: #555;
-}
-
-.answer.show {
-    max-height: 200px;
-    padding: 0 20px;
-}
-
-/* Estilos do botão */
-.toggle-btn {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-}
-
-.toggle-btn:hover {
-    background-color: #2980b9;
-}
-
-/* Responsividade */
-@media (max-width: 600px) {
-    .container {
-        padding: 10px;
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo de Perguntas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    
-    .question, .answer {
-        padding: 15px;
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      width: 350px;
+      text-align: center;
     }
-}
+
+    .question {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #eee;
+      transition: 0.3s;
+    }
+
+    .options button:hover {
+      background-color: #ddd;
+    }
+
+    .correct {
+      background-color: #a5d6a7 !important;
+    }
+
+    .incorrect {
+      background-color: #ef9a9a !important;
+    }
+
+    #next-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background-color: #2196f3;
+      color: white;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="question" id="question">Carregando pergunta...</div>
+  <div class="options" id="options"></div>
+  <button id="next-btn">Próxima</button>
+</div>
+
+<script>
+  const questions = [
+    {
+      question: "Qual é a capital do Brasil?",
+      options: ["São Paulo", "Brasília", "Rio de Janeiro", "Salvador"],
+      answer: 1
+    },
+    {
+      question: "Quanto é 5 × 3?",
+      options: ["8", "15", "10", "5"],
+      answer: 1
+    },
+    {
+      question: "Qual planeta é conhecido como Planeta Vermelho?",
+      options: ["Terra", "Júpiter", "Marte", "Saturno"],
+      answer: 2
+    }
+  ];
+
+  let currentQuestion = 0;
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const nextBtn = document.getElementById("next-btn");
+
+  function loadQuestion() {
+    const q = questions[currentQuestion];
+    questionEl.textContent = q.question;
+    optionsEl.innerHTML = "";
+
+    q.options.forEach((option, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = option;
+      btn.onclick = () => selectAnswer(index);
+      optionsEl.appendChild(btn);
+    });
+
+    nextBtn.style.display = "none";
+  }
+
+  function selectAnswer(selectedIndex) {
+    const q = questions[currentQuestion];
+    const buttons = optionsEl.querySelectorAll("button");
+
+    buttons.forEach((btn, index) => {
+      btn.disabled = true;
+      if (index === q.answer) {
+        btn.classList.add("correct");
+      } else if (index === selectedIndex) {
+        btn.classList.add("incorrect");
+      }
+    });
+
+    nextBtn.style.display = "inline-block";
+  }
+
+  nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < questions.length) {
+      loadQuestion();
+    } else {
+      questionEl.textContent = "Fim do jogo!";
+      optionsEl.innerHTML = "";
+      nextBtn.style.display = "none";
+    }
+  };
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
